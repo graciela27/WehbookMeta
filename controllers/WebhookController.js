@@ -32,7 +32,7 @@ async function getAuthTokenDirectus() {
 
         return response.data
     } catch (error) {
-        console.error('Error al obtener el token:', error);
+        logger.child(error).error(`Error al realizar la solicitud con el token`);
     }
 }
 
@@ -51,9 +51,9 @@ async function getDataWithToken(celular, estado_envio, id_mensaje, fecha, descri
             },
             "data": {
                 "Estado": estado_envio,
-                "messages_id":id_mensaje,
+                "messages_id": id_mensaje,
                 "F_Envio": fecha,
-                "descripcion_error":descripcion_error,
+                "descripcion_error": descripcion_error,
                 "Log": error
             }
 
@@ -63,11 +63,11 @@ async function getDataWithToken(celular, estado_envio, id_mensaje, fecha, descri
                     'Authorization': `Bearer ${token}`
                 }
             });
-    
-        console.log(dataResponse.data)
+
+        logger.child(dataResponse.data).info(`Respuesta de directus`);
 
     } catch (error) {
-        console.error('Error al realizar la solicitud con el token:', error);
+        logger.child(error).error(`Error al realizar la solicitud con el token`);
     }
 }
 
@@ -89,12 +89,12 @@ exports.events = async (req, res) => {
         const id_mensaje = estado[0].id
         const fecha = estado[0].timestamp
         const error = estado[0].errors[0].code
-        const descripcion_error = estado[0].errors[0].error_data.details 
+        const descripcion_error = estado[0].errors[0].error_data.details
 
-        if (estado_envio === "sent" ){
+        if (estado_envio === "sent") {
             getDataWithToken(celular, estado_envio, id_mensaje, fecha);
         }
-        if (estado_envio === "failed" ){
+        if (estado_envio === "failed") {
             getDataWithToken(celular, estado_envio, id_mensaje, fecha, error, descripcion_error);
         }
     }
