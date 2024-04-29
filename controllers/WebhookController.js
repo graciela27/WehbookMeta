@@ -65,6 +65,7 @@ async function getDataWithToken(celular, estado_envio, id_mensaje, fecha, descri
             });
 
         logger.child(dataResponse.data).info(`Respuesta de directus`);
+        logger.child({exito: true}).info(`Respuesta de directus`);
 
     } catch (error) {
         logger.child(error).error(`Error al realizar la solicitud con el token`);
@@ -88,13 +89,13 @@ exports.events = async (req, res) => {
         const celular = estado[0].recipient_id
         const id_mensaje = estado[0].id
         const fecha = estado[0].timestamp
-        const error = estado[0].errors[0].code
-        const descripcion_error = estado[0].errors[0].error_data.details
 
         if (estado_envio === "sent") {
-            getDataWithToken(celular, estado_envio, id_mensaje, fecha);
+            getDataWithToken(celular, estado_envio, id_mensaje, fecha, "", "");
         }
         if (estado_envio === "failed") {
+            const error = estado[0].errors[0].code
+            const descripcion_error = estado[0].errors[0].error_data.details
             getDataWithToken(celular, estado_envio, id_mensaje, fecha, error, descripcion_error);
         }
     }
