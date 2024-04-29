@@ -54,7 +54,8 @@ async function getDataWithToken(celular, estado_envio, id_mensaje, fecha, descri
                 "messages_id": id_mensaje,
                 "F_Envio": fecha,
                 "descripcion_error": descripcion_error,
-                "Log": error
+                "Log": descripcion_error,
+                "error": error
             }
 
         },
