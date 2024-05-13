@@ -1,5 +1,7 @@
 const logger = require('../config/winston');
 const axios = require('axios')
+const {connectToDatabase} = require('../mongo/mongodb')
+
 
 
 exports.verifyToken = async (req, res) => {
@@ -84,6 +86,16 @@ exports.events = async (req, res) => {
             'Content-Type': 'application/json',
         }
     })
+    if(process.LOGS === "SI"){
+        try {
+            const db = await connectToDatabase();
+            const result = await db.collection('logs').insertOne({ fecha:new Date(), data });
+          } catch (err) {
+            console.error('Error al registrar', err);
+          }
+    }
+
+
     const estado = data.entry[0].changes[0].value.statuses;
     if (estado) {
         const estado_envio = estado[0].status
